@@ -133,9 +133,63 @@ def preprocess_dataset(
     print(f"- Test set: {test_output_path}")
 
 
-if __name__ == "__main__":
-    preprocess_dataset(
-        input_csv_path="dataset/AI_Human.csv",
-        output_directory="processed_data",
-        sample_size=None,
+def create_subset_splits(
+    dataframe: pd.DataFrame,
+    subset_size: int,
+    output_directory: str,
+) -> None:
+    print(f"\n=== Creating dataset with size: {subset_size} ===")
+
+    # Ensure balanced sampling
+    samples_per_class = subset_size // 2
+
+    subset_dataframe = dataframe.groupby("generated", group_keys=False).apply(
+        lambda group: group.sample(
+            n=min(len(group), samples_per_class),
+            random_state=42,
+        )
+    ).reset_index(drop=True)
+
+    print("Subset class distribution:")
+    print(subset_dataframe["generated"].value_counts())
+
+    # Split: 80 train, 10 val, 10 test
+    train_df, temp_df = train_test_split(
+        subset_dataframe,
+        test_size=0.2,
+        random_state=42,
+        stratify=subset_dataframe["generated"],
     )
+
+    val_df, test_df = train_test_split(
+        temp_df,
+        test_size=0.5,
+        random_state=42,
+        stratify=temp_df["generated"],
+    )
+
+    # Create directory
+    output_path = Path(output_directory)
+    output_path.mkdir(parents=True, exist_ok=True)
+
+    # Save files
+    train_df.to_csv(output_path / "train.csv", index=False)
+    val_df.to_csv(output_path / "validation.csv", index=False)
+    test_df.to_csv(output_path / "test.csv", index=False)
+
+    print(f"Saved to {output_directory}")
+
+
+if __name__ == "__main__":
+    full_dataframe = load_large_csv("dataset/AI_Human.csv")
+
+    print("\nRemoving duplicates...")
+    full_dataframe = full_dataframe.drop_duplicates(subset=["text"]).reset_index(drop=True)
+
+    print("\nFinal dataset distribution:")
+    print(full_dataframe["generated"].value_counts())
+
+    # Create multiple dataset sizes
+    create_subset_splits(full_dataframe, 5000, "processed_data/dataset_5k")
+    create_subset_splits(full_dataframe, 20000, "processed_data/dataset_20k")
+    create_subset_splits(full_dataframe, 100000, "processed_data/dataset_100k")

@@ -1,0 +1,18 @@
+{
+    "accuracy": 0.976,
+    "precision": 0.9798387096774194,
+    "recall": 0.972,
+    "f1_score": 0.9759036144578314,
+    "confusion_matrix": [
+        [
+            245,
+            5
+        ],
+        [
+            7,
+            243
+        ]
+    ],
+    "classification_report": "              precision    recall  f1-score   support\n\n       Human       0.97      0.98      0.98       250\n          AI       0.98      0.97      0.98       250\n\n    accuracy                           0.98       500\n   macro avg       0.98      0.98      0.98       500\nweighted avg       0.98      0.98      0.98       500\n",
+    "average_ai_probability": 0.495039703685805
+}
