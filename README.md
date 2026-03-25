@@ -3,7 +3,7 @@
 ## Overview
 This project aims to distinguish between human-written and AI-generated text using a range of machine learning and deep learning models. The task is formulated as a binary text classification problem.
 
-We establish a strong baseline using TF-IDF and Logistic Regression, and extend the analysis to neural models including MLP, BiLSTM, and BERT.
+We establish a strong baseline using TF-IDF and Logistic Regression, and extend the analysis to neural models including BiLSTM, BERT, and DistilBERT.
 
 ---
 
